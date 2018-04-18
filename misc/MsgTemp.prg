@@ -1,12 +1,52 @@
-#include 'minigui.ch'
+#include 'oohg.ch'
+
+FUNCTION Main
+
+   DEFINE WINDOW Main ;
+      WIDTH 500 ;
+      HEIGHT 500
+
+      @ 10, 10 LABEL lbl_1 ;
+         VALUE "Message:" ;
+         WIDTH 60
+
+      @ 10, 80 TEXTBOX txt_msg ;
+         WIDTH 200
+
+      @ 40, 10 LABEL lbl_2 ;
+         VALUE "Title:" ;
+         WIDTH 60
+
+      @ 40, 80 TEXTBOX txt_ttl ;
+         WIDTH 200
+
+      @ 70, 10 LABEL lbl_3 ;
+         VALUE "Size:" ;
+         WIDTH 60
+
+      @ 70, 80 TEXTBOX txt_sz ;
+         WIDTH 40 ;
+         NUMERIC
+
+      @ 100, 10 BUTTON but ;
+         CAPTION "Show" ;
+         ACTION MsgTemp( Main.txt_msg.value, Main.txt_ttl.value, 5, GREEN, Main.txt_sz.value )
+
+      ON KEY ESCAPE ACTION ThisWindow.Release()
+   END WINDOW
+
+   CENTER WINDOW Main
+   ACTIVATE WINDOW Main
+
+RETURN NIL
 
 /*------------------------------------------------------------------------------*
 * Aporte Original de Sergio Castellari
 * Contribucion a los calculos de las cadenas de Grigory Filatov
 * Colaboracion de Ciro Vargas Clemow
 * Desarrollado por Renan Zapata el 23-12-2008
-
-
+* Adaptado para OOHG por Fernando Yurisich el 17/04/18
+*
 * MsgTemp() Visualiza en pantalla un mensaje temporal.
 * Recibe:
 * cMensaje = Texto a Visualizar -obligatorio- . Para visializar varias lineas, separelas con CRLF
@@ -16,242 +56,127 @@
 * nTamanio = Tamaño de la Fuente *
 * nWidth = Ancho de la Ventana *
 * nHeight = Alto de la Ventana *
-
-
+*
 * GTH()  Devuelve el alto en pixeles de una cadena de caracteres segun el tamaño de la letra utilizada
 * Recibe:
 * cStr = Cadena de caracteres a evaluar
 * nFont = Tamaño de la letra utilizada en puntos
 * Devuelve = Numero de pixeles de alto
-
-
+*
 * GTW()  Devuelve el ancho en pixeles de una cadena de caracteres segun el tamaño de la letra utilizada
 * Recibe:
 * cStr = Cadena de caracteres a evaluar
 * nFont = Tamaño de la letra utilizada en puntos
 * Devuelve = Numero de pixeles de ancho
+*------------------------------------------------------------------------------*/
 
-*---------------------------------------------------------------- 10-03-2007 --*
-*---------------------------------------------------------------- 21-11-2008 --*
-*---------------------------------------------------------------- 23-12-2008 --*/
-Function MsgTemp (cMensaje,cTitulo,nTiempo,cColor,nTamanio,nWidth,nHeight)
-	local aux := ARRAY(3), I
+FUNCTION MsgTemp( cMensaje, cTitulo, nTiempo, cColor, nTamanio, nWidth, nHeight )
 
-	DEFAULT nTiempo TO 3, ;
-	cColor TO BLACK, ;
-	nTamanio TO 9, ;
-	cTitulo TO '¡ Ojo !'
+   LOCAL aux := Array(3), i, uFont
 
-	//	determinamos cuantas lineas contiene el mensaje
-	AUX[1] := mlcount(cMensaje)
-	//	AHORA DETERMINAMOS LA MAYOR ALTURA X LINEA Y EL MAYOR LARGO
- 	IF nWidth = NIL
-		AUX[2] := 0
-		nWidth := 0
-		FOR I := 1 TO AUX[1]
-			AUX[2] := MAX(nWidth, GTW(ALLTRIM(MEMOLINE(cMensaje,,I)), nTamanio))
-			nWidth := AUX[2]
-		NEXT
-*		nWidth := (AUX[2]*nTamanio*3/4)
-	ENDIF
+   DEFAULT nTiempo  TO 3, ;
+           cColor   TO BLACK, ;
+           nTamanio TO 9, ;
+           cTitulo  TO '¡ See !'
 
-	IF nHeight = NIL
-		nHeight := GTH(MEMOLINE(cMensaje,,1), nTamanio) * MLCOUNT(cMensaje)
-*		nHeight := ((nTamanio*4/3)+5)*MLCOUNT(cMensaje)
-	ENDIF
+   uFont := InitFont( "Arial", nTamanio, .F., .F., .F., .F., 0, 0 )
 
-	DEFINE WINDOW frmMensajes AT 0,0 WIDTH nWidth+20 HEIGHT nHeight+60 TITLE cTitulo MODAL NOSYSMENU
-		DEFINE LABEL lblMensajes
-			ROW 10
-			COL 10
-			WIDTH nWidth
-			HEIGHT nHeight
-			VALUE AllTrim(cMensaje)
-			FONTSIZE nTamanio
-			FONTCOLOR cColor
-			FONTBOLD .t.
-			CENTERALIGN .t.
-		END LABEL
-	END WINDOW
-	CENTER WINDOW frmMensajes
-	ACTIVATE WINDOW frmMensajes NOWAIT
-	DO WHILE nTiempo>=0
-		DO EVENTS
-		Inkey(.5)
-		nTiempo:=nTiempo-.5
-	ENDDO
-	frmMensajes.RELEASE
-Return .t.
+   // determinamos cuantas lineas contiene el mensaje
+   aux[1] := MLCount( cMensaje )
+   // ahora determinamos la mayor altura x linea y el mayor largo
+   IF nWidth = NIL
+      aux[2] := 0
+      nWidth := 0
+      FOR i := 1 TO aux[1]
+         aux[2] := Max( nWidth, GTW( AllTrim( MemoLine( cMensaje, 254, i ) ), uFont ) )
+         nWidth := aux[2]
+      NEXT
+   ENDIF
 
+   IF nHeight = NIL
+      nHeight := GTH( MemoLine( cMensaje, 254, 1 ), uFont ) * MLCount( cMensaje )
+   ENDIF
 
+   DEFINE WINDOW frmMensajes AT 0,0 WIDTH ( nWidth + 50 ) HEIGHT ( nHeight + 60 ) TITLE cTitulo MODAL NOSYSMENU
+      DEFINE LABEL lblMensajes
+         ROW 10
+         COL 10
+         WIDTH ( nWidth + 10 )
+         HEIGHT nHeight
+         VALUE cMensaje
+         FONTSIZE nTamanio
+         FONTCOLOR cColor
+         BORDER .T.
+      END LABEL
+   END WINDOW
 
-*-----------------------------------------------------------------------------*
-func GTH(cStr, nFont)
-*-----------------------------------------------------------------------------*
-Return GetTextHeight( NIL, cStr, nFont )
+   CENTER WINDOW frmMensajes
+   ACTIVATE WINDOW frmMensajes NOWAIT
+
+   DO WHILE nTiempo >= 0
+      DO EVENTS
+      Inkey( 0.5 )
+      nTiempo := nTiempo - 0.5
+   ENDDO
+
+   frmMensajes.Release()
+
+   DeleteObject( uFont )
+
+RETURN .T.
 
 
-
-*-----------------------------------------------------------------------------*
-func GTW(cStr, nFont)
-*-----------------------------------------------------------------------------*
-Return GetTextWidth( NIL, cStr, nFont )
+FUNCTION GTH( cStr, uFont )
+RETURN GetTextHeight( NIL, cStr, uFont )
 
 
-
-*-----------------------------------------------------------------------------*
-*Function _GetFontHandle( ControlName, ParentForm )
-*-----------------------------------------------------------------------------*
-*Return ( _HMG_aControlFontHandle [ GetControlIndex ( ControlName, ParentForm ) ] )
-
-
+FUNCTION GTW( cStr, uFont )
+RETURN GetTextWidth( NIL, cStr, uFont )
 
 #pragma BEGINDUMP
 
-
-
 #include <windows.h>
-
+#include <commctrl.h>
 #include "hbapi.h"
+#include "oohg.h"
 
-#include "hbapiitm.h"
-
-
-
-HB_FUNC( GETTEXTWIDTH )  // returns the width of a string in pixels
-
+HB_FUNC( INITFONT )             // cFontname, nFontSize, lBold, lItalic, lUnderline, lStrikeOut, nEscapement, nCharset, nOrientation
 {
+   HFONT font;
+   int bold        = FW_NORMAL;
+   int italic      = 0;
+   int underline   = 0;
+   int strikeout   = 0;
+   int escapement  = hb_parnl( 7 );
+   int orientation = hb_parnl( 9 );
 
-    HDC   hDC        = ( HDC ) hb_parnl( 1 );
+   if ( hb_parl( 3 ) )
+   {
+      bold = FW_BOLD;
+   }
 
-    HWND  hWnd;
+   if ( hb_parl( 4 ) )
+   {
+      italic = 1;
+   }
 
-    DWORD dwSize;
+   if ( hb_parl( 5 ) )
+   {
+      underline = 1;
+   }
 
-    BOOL  bDestroyDC = FALSE;
+   if ( hb_parl( 6 ) )
+   {
+      strikeout = 1;
+   }
 
-    HFONT hFont = ( HFONT ) hb_parnl( 3 );
+   font = PrepareFont( (char *) hb_parc( 1 ), (LPARAM) hb_parni( 2 ), bold, italic, underline, strikeout, escapement, orientation ) ;
 
-    HFONT hOldFont;
-
-    SIZE sz;
-
-
-
-    if( ! hDC )
-
-    {
-
-       bDestroyDC = TRUE;
-
-       hWnd = GetActiveWindow();
-
-       hDC = GetDC( hWnd );
-
-    }
-
-
-
-    if( hFont )
-
-       hOldFont = ( HFONT ) SelectObject( hDC, hFont );
-
-
-
-    GetTextExtentPoint32( hDC, hb_parc( 2 ), hb_parclen( 2 ), &sz );
-
-    dwSize = sz.cx;
-
-
-
-    if( hFont )
-
-       SelectObject( hDC, hOldFont );
-
-
-
-    if( bDestroyDC )
-
-        ReleaseDC( hWnd, hDC );
-
-
-
-    hb_retni( LOWORD( dwSize ) );
-
+   hb_retnl( (LONG) font );
 }
 
+#pragma ENDDUMP
 
-
-HB_FUNC( GETTEXTHEIGHT ) // returns the height of a string in pixels
-
-{
-
-    HDC   hDC = ( HDC ) hb_parnl( 1 );
-
-    HWND  hWnd;
-
-    DWORD dwSize;
-
-    BOOL  bDestroyDC = FALSE;
-
-    HFONT hFont = ( HFONT ) hb_parnl( 3 );
-
-    HFONT hOldFont;
-
-    SIZE  sz;
-
-
-
-    if( !hDC )
-
-    {
-
-       bDestroyDC = TRUE;
-
-       hWnd = GetActiveWindow();
-
-       hDC = GetDC( hWnd );
-
-    }
-
-
-
-    if( hFont )
-
-    {
-
-       hOldFont = ( HFONT ) SelectObject( hDC, hFont );
-
-    }
-
-
-
-    GetTextExtentPoint32( hDC, hb_parc(2), hb_parclen(2), &sz );
-
-    dwSize = sz.cy;
-
-
-
-    if( hFont )
-
-    {
-
-       SelectObject( hDC, hOldFont );
-
-    }
-
-
-
-    if( bDestroyDC )
-
-    {
-
-       ReleaseDC( hWnd, hDC );
-
-    }
-
-
-
-    hb_retni( LOWORD(dwSize) );
-
-}
+/*
+ * EOF
+ */
