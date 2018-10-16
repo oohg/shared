@@ -79,7 +79,7 @@ FUNCTION MsgTemp( cMensaje, cTitulo, nTiempo, cColor, nTamanio, nWidth, nHeight 
            nTamanio TO 9, ;
            cTitulo  TO '¡ See !'
 
-   uFont := InitFont( "Arial", nTamanio, .F., .F., .F., .F., 0, 0 )
+   uFont := InitFont( "Arial", nTamanio, .F., .F., .F., .F., 0, DEFAULT_CHARSET, 0, 0, .F. )
 
    // determinamos cuantas lineas contiene el mensaje
    aux[1] := MLCount( cMensaje )
@@ -132,50 +132,6 @@ RETURN GetTextHeight( NIL, cStr, uFont )
 
 FUNCTION GTW( cStr, uFont )
 RETURN GetTextWidth( NIL, cStr, uFont )
-
-#pragma BEGINDUMP
-
-#include <windows.h>
-#include <commctrl.h>
-#include "hbapi.h"
-#include "oohg.h"
-
-HB_FUNC( INITFONT )             // cFontname, nFontSize, lBold, lItalic, lUnderline, lStrikeOut, nEscapement, nCharset, nOrientation
-{
-   HFONT font;
-   int bold        = FW_NORMAL;
-   int italic      = 0;
-   int underline   = 0;
-   int strikeout   = 0;
-   int escapement  = hb_parnl( 7 );
-   int orientation = hb_parnl( 9 );
-
-   if ( hb_parl( 3 ) )
-   {
-      bold = FW_BOLD;
-   }
-
-   if ( hb_parl( 4 ) )
-   {
-      italic = 1;
-   }
-
-   if ( hb_parl( 5 ) )
-   {
-      underline = 1;
-   }
-
-   if ( hb_parl( 6 ) )
-   {
-      strikeout = 1;
-   }
-
-   font = PrepareFont( (char *) hb_parc( 1 ), (LPARAM) hb_parni( 2 ), bold, italic, underline, strikeout, escapement, orientation ) ;
-
-   hb_retnl( (LONG) font );
-}
-
-#pragma ENDDUMP
 
 /*
  * EOF
