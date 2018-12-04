@@ -237,32 +237,32 @@ DECLARE DLL_TYPE_LONG SetLayeredWindowAttributes( ;
 
 HB_FUNC ( GETWINDOWLONG )
 {
-   hb_retnl( GetWindowLong( HWNDparam(1), hb_parni(2) ) );
+   HB_RETNL( GetWindowLong( HWNDparam( 1 ), hb_parni( 2 ) ) );
 }
 
 HB_FUNC ( SETWINDOWLONG )
 {
-   hb_retnl( SetWindowLong( HWNDparam( 1 ), hb_parni(2), hb_parnl(3) ));
+   HB_RETNL( SetWindowLong( HWNDparam( 1 ), hb_parni( 2 ), HB_PARNL( 3 ) ) );
 }
 
 HB_FUNC ( SETLAYEREDWINDOWATTRIBUTES )
 {
-   hb_retnl( SetLayeredWindowAttributes( HWNDparam( 1 ), hb_parni(2), hb_parni(3), hb_parnl(4) ));
+   hb_retni( SetLayeredWindowAttributes( HWNDparam( 1 ), hb_parni( 2 ), hb_parni( 3 ), hb_parnl( 4 ) ));
 }
 
 HB_FUNC( C_AND )
 {
-   hb_retnl( hb_parnl(1) & hb_parnl(2) ) ;
+   HB_RETNL( HB_PARNL( 1 ) & HB_PARNL( 2 ) ) ;
 }
 
 HB_FUNC( C_OR )
 {
-   hb_retnl( hb_parnl(1) | hb_parnl(2) ) ;
+   HB_RETNL( HB_PARNL( 1 ) | HB_PARNL( 2 ) ) ;
 }
 
 HB_FUNC( C_NOT )
 {
-   hb_retnl( ~hb_parnl(1) ) ;
+   HB_RETNL( ~ HB_PARNL( 1 ) ) ;
 }
 
 #pragma ENDDUMP

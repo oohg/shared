@@ -103,7 +103,6 @@ RETURN
 
 #pragma BEGINDUMP
 
-#define HB_OS_WIN_USED
 #define _WIN32_WINNT   0x0400
 #include <windows.h>
 #include "hbapi.h"
@@ -118,7 +117,7 @@ RETURN
 
 HB_FUNC ( DRAWPICTURE )
 {    
-    HWND       hWnd = ( HWND ) hb_parnl( 1 );
+    HWND       hWnd = HWNDparam( 1 );
     HDC        dc = GetDC( hWnd );
     HANDLE     picture;
     BITMAP     bitmap;
@@ -135,10 +134,9 @@ HB_FUNC ( DRAWPICTURE )
     int desktopx ;
     int desktopy ;
 
-     GetWindowRect (hWnd, &box );
+     GetWindowRect( hWnd, &box );
      desktopx = box.right - box.left;
      desktopy = box.bottom -box.top;
-
 
     if ((picture = LoadImage (NIL,hb_parc(2),IMAGE_BITMAP,NIL,NIL,LR_LOADFROMFILE)) == NULL) {
         hb_retl (FALSE);
@@ -228,12 +226,12 @@ HB_FUNC ( DRAWPICTURE )
               break;
               }
 
-    SelectObject (bits,old);    
-    DeleteDC     (bits);
-    DeleteObject (picture);
-    ReleaseDC(hWnd, dc);
+    SelectObject( bits, old );
+    DeleteDC( bits );
+    DeleteObject( picture );
+    ReleaseDC( hWnd, dc );
 
-    hb_retl (TRUE);
+    hb_retl( TRUE );
 }
 
 #pragma ENDDUMP
