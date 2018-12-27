@@ -115,7 +115,7 @@ RETURN
 #define HB_TILE                        1
 #define HB_STRETCH                     2
 
-HB_FUNC ( DRAWPICTURE )
+HB_FUNC( DRAWPICTURE )
 {    
     HWND       hWnd = HWNDparam( 1 );
     HDC        dc = GetDC( hWnd );

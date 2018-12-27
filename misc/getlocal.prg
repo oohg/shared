@@ -674,19 +674,19 @@ return (ret)
 #include "hbapi.h"
 #include "oohg.h"
 
-HB_FUNC ( GETLOCALEINFO )
+HB_FUNC( GETLOCALEINFO )
 {
    hb_retnl( GetLocaleInfo( hb_parnl(1), hb_parnl(2), hb_parc(3), hb_parnl(4) ));
 }
-HB_FUNC ( GETTHREADLOCALE )
+HB_FUNC( GETTHREADLOCALE )
 {
    hb_retnl( GetThreadLocale( ) );
 }
-HB_FUNC ( GETSYSTEMDEFAULTLCID )
+HB_FUNC( GETSYSTEMDEFAULTLCID )
 {
    hb_retnl( GetSystemDefaultLCID( ) );
 }
-HB_FUNC ( GETUSERDEFAULTLCID )
+HB_FUNC( GETUSERDEFAULTLCID )
 {
    hb_retnl( GetUserDefaultLCID( ) );
 }

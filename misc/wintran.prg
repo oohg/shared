@@ -235,17 +235,17 @@ DECLARE DLL_TYPE_LONG SetLayeredWindowAttributes( ;
 #include "hbapi.h"
 #include "oohg.h"
 
-HB_FUNC ( GETWINDOWLONG )
+HB_FUNC( GETWINDOWLONG )
 {
    HB_RETNL( GetWindowLong( HWNDparam( 1 ), hb_parni( 2 ) ) );
 }
 
-HB_FUNC ( SETWINDOWLONG )
+HB_FUNC( SETWINDOWLONG )
 {
    HB_RETNL( SetWindowLong( HWNDparam( 1 ), hb_parni( 2 ), HB_PARNL( 3 ) ) );
 }
 
-HB_FUNC ( SETLAYEREDWINDOWATTRIBUTES )
+HB_FUNC( SETLAYEREDWINDOWATTRIBUTES )
 {
    hb_retni( SetLayeredWindowAttributes( HWNDparam( 1 ), hb_parni( 2 ), hb_parni( 3 ), hb_parnl( 4 ) ));
 }
