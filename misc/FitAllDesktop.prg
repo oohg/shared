@@ -15,8 +15,8 @@
 Function Main
 	DEFINE WINDOW Form_1 obj Ventana ;
 		AT GetDesktopRealTop(),GetDesktopRealLeft() ;
-		WIDTH GETDESKTOPREALWIDTH() ;
-		HEIGHT GETDESKTOPREALHEIGHT() ;
+		WIDTH GetDesktopRealWidth() ;
+		HEIGHT GetDesktopRealHeight() ;
 		TITLE 'Hello World!' ;
 		MAIN ;
     ON INIT (Ventana:txt_Top:value    := Ventana:row, ;
@@ -38,54 +38,4 @@ Function Main
 	
 	ACTIVATE WINDOW Form_1
 Return
-
-#pragma BEGINDUMP
-#define _WIN32_WINNT 0x0400
-#include <windows.h>
-#include "hbapi.h"
-#include "hbvm.h"
-#include "hbstack.h"
-#include "hbapiitm.h"
-
-HB_FUNC (GETDESKTOPREALTOP) 
-{
-	RECT rect;
-	int t ;
-	SystemParametersInfo( SPI_GETWORKAREA, 1, &rect, 0 );
-	t = rect.top ;
-
-	hb_retni(t);
-
-}
-HB_FUNC (GETDESKTOPREALLEFT) 
-{
-	RECT rect;
-	int l ;
-	SystemParametersInfo( SPI_GETWORKAREA, 1, &rect, 0 );
-	l = rect.left ;
-
-	hb_retni(l);
-
-}
-
-HB_FUNC (GETDESKTOPREALWIDTH) 
-{
-	RECT rect;
-	int w ;
-	SystemParametersInfo( SPI_GETWORKAREA, 1, &rect, 0 );
-	w = rect.right - rect.left ;
-
-	hb_retni(w);
-
-}
-
-HB_FUNC (GETDESKTOPREALHEIGHT) 
-{
-	RECT rect;
-	int h ;
-        SystemParametersInfo( SPI_GETWORKAREA, 1, &rect, 0 );
-        h = rect.bottom - rect.top ;
-	hb_retni(h);
-}
-
 
